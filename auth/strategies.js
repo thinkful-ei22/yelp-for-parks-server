@@ -29,6 +29,7 @@ const localStrategy = new LocalStrategy((username, password, callback) => {
       return callback(null, user);
     })
     .catch(err => {
+      console.log(err)
       if (err.reason === 'LoginError') {
         return callback(null, false, err);
       }

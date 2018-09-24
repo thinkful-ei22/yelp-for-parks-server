@@ -21,6 +21,9 @@ app.use(
   })
 );
 
+//body parser
+app.use(express.json());
+
 app.use(
   cors({
     origin: CLIENT_ORIGIN

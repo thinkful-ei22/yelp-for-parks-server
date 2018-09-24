@@ -1,15 +1,12 @@
 'use strict';
 
 const express = require('express');
-const bodyParser = require('body-parser');
 
 const User = require('../models/user');
 
 const router = express.Router();
 
-const jsonParser = bodyParser.json();
-
-router.post('/', jsonParser, (req, res) => {
+router.post('/', (req, res) => {
   const requiredFields = ['username', 'password', 'firstName', 'lastName'];
   const missingField = requiredFields.find(field => !(field in req.body));
 
@@ -91,7 +88,7 @@ router.post('/', jsonParser, (req, res) => {
 
 
   return User.find({ username })
-    .count()
+    .countDocuments()
     .then(count => {
       if (count > 0) {
         return Promise.reject({
