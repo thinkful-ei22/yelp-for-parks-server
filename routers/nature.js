@@ -22,8 +22,6 @@ router.post('/', jsonParser, (req, res, next) => {
           specialInstructions
         } = req.body;
 
-  const userId = req.user.id;
-
   //Remember that amenities and special instructions are not required to post
   const newNatureSpot = {
     title,
@@ -31,8 +29,7 @@ router.post('/', jsonParser, (req, res, next) => {
     city,
     state,
     zipCode,
-    description,
-    userId
+    description
   };
 
   if (!title) {
@@ -68,7 +65,7 @@ router.post('/', jsonParser, (req, res, next) => {
   Nature.create(newNatureSpot)
   .then(result => {
     res
-      .location(`${req.originalUrl}/${result.id}`) //You will have to add '/${result.id} in here later'
+      .location(`${req.originalUrl}/${result.id}`)
       .status(201)
       .json(result);
   })
