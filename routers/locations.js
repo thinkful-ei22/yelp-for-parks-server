@@ -22,10 +22,6 @@ router.get('/:id', (req, res, next) => {
   const id = req.params.id;
   
   Location.findById(id)
-    .populate({
-      path: 'comments', options: { sort: { time: +1 }},
-      populate: { path: 'userId', select: 'firstName'}
-    })
     .then(location => {
       if(location){
         res.json(location);
@@ -105,6 +101,7 @@ router.post('/', passport.authenticate('jwt', { session: false, failWithError: t
         .json(location);
     })
     .catch(err => {
+      console.log(err)
       next(err);
     });
 });

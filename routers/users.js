@@ -1,7 +1,6 @@
 'use strict';
 
 const express = require('express');
-
 const User = require('../models/users');
 
 const router = express.Router();
@@ -102,6 +101,7 @@ router.post('/', (req, res) => {
       return User.hashPassword(password);
     })
     .then(hash => {
+      console.log(hash)
       return User.create({
         username,
         password: hash,
@@ -113,6 +113,7 @@ router.post('/', (req, res) => {
       return res.status(201).json(user.serialize());
     })
     .catch(err => {
+      console.log(err)
       if (err.reason === 'ValidationError') {
         return res.status(err.code).json(err);
       }
