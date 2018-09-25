@@ -11,7 +11,7 @@ const LocationSchema = mongoose.Schema({
   state: {type: String, required: true},
   zipCode: {type: Number, required: true},
   description: {type: String, required: true},
-  amenities: {type: Array},
+  amenities: {type: Array, default: []},
   specialInstructions: {type: String},
 });
 

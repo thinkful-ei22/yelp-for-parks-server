@@ -1,4 +1,3 @@
-'use strict';
 
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -7,20 +6,18 @@ const Location = require('../models/locations');
 
 const router = express.Router();
 
-const jsonParser = bodyParser.json();
-
-router.post('/', jsonParser, (req, res, next) => {
+router.post('/', (req, res, next) => {
 
   const {
-          title,
-          address,
-          city,
-          state,
-          zipCode,
-          description,
-          amenities = [],
-          specialInstructions
-        } = req.body;
+    title,
+    address,
+    city,
+    state,
+    zipCode,
+    description,
+    amenities = [],
+    specialInstructions
+  } = req.body;
 
   //Remember that amenities and special instructions are not required to post
   const newLocation = {
@@ -63,13 +60,13 @@ router.post('/', jsonParser, (req, res, next) => {
   }
 
   Location.create(newLocation)
-  .then(result => {
-    res
-      .location(`${req.originalUrl}/${result.id}`)
-      .status(201)
-      .json(result);
-  })
-  .catch(err => {
+    .then(result => {
+      res
+        .location(`${req.originalUrl}/${result.id}`)
+        .status(201)
+        .json(result);
+    })
+    .catch(err => {
       next(err);
     });
 });
