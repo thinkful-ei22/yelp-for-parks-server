@@ -3,7 +3,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 
-const Nature = require('../models/nature');
+const Location = require('../models/locations');
 
 const router = express.Router();
 
@@ -23,7 +23,7 @@ router.post('/', jsonParser, (req, res, next) => {
         } = req.body;
 
   //Remember that amenities and special instructions are not required to post
-  const newNatureSpot = {
+  const newLocation = {
     title,
     address,
     city,
@@ -62,7 +62,7 @@ router.post('/', jsonParser, (req, res, next) => {
     return next(err);
   }
 
-  Nature.create(newNatureSpot)
+  Location.create(newLocation)
   .then(result => {
     res
       .location(`${req.originalUrl}/${result.id}`)

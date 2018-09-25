@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 
 mongoose.Promise = global.Promise;
 
-const NatureSchema = mongoose.Schema({
+const LocationSchema = mongoose.Schema({
   title: {type: String, required: true, unique: true},
   address: {type: String, required: true, unique: true},
   city: {type: String, required: true},
@@ -15,6 +15,6 @@ const NatureSchema = mongoose.Schema({
   specialInstructions: {type: String},
 });
 
-const Nature = mongoose.model('Nature', NatureSchema);
+const Location = mongoose.model('Location', LocationSchema);
 
-module.exports = Nature;
+module.exports = Location;
