@@ -1,12 +1,40 @@
+'use strict';
 
 const express = require('express');
-const bodyParser = require('body-parser');
-
+const passport = require('passport');
 const Location = require('../models/locations');
 
 const router = express.Router();
 
-router.post('/', (req, res, next) => {
+//Get locations
+router.get('/', (req, res, next) => {
+  Location.find()
+    .then(locations => {
+      res.json(locations);
+    })
+    .catch(err => {
+      next(err);
+    });
+});
+
+//Get location by Id
+router.get('/:id', (req, res, next) => {
+  const id = req.params.id;
+  
+  Location.findById(id)
+    .then(location => {
+      if(location){
+        res.json(location);
+      } else {
+        next();
+      }
+    })
+    .catch(err => next(err));
+});
+
+
+//Create new location (only authenticated users)
+router.post('/', passport.authenticate('jwt', { session: false, failWithError: true }), (req, res, next) => {
 
   const {
     title,
@@ -15,7 +43,7 @@ router.post('/', (req, res, next) => {
     state,
     zipCode,
     description,
-    amenities = [],
+    amenities,
     specialInstructions
   } = req.body;
 
@@ -29,30 +57,36 @@ router.post('/', (req, res, next) => {
     description
   };
 
+  //TODO: add validation for empty field
   if (!title) {
     const err = new Error('Missing `title` in request body');
     err.status = 400;
     return next(err);
   }
 
+  //TODO: add validation for empty field
   if (!address) {
     const err = new Error('Missing `address` in request body');
     err.status = 400;
     return next(err);
   }
 
+  //TODO: add validation for empty field
   if (!state) {
     const err = new Error('Missing `state` in request body');
     err.status = 400;
     return next(err);
   }
 
+  //Do we need zipcode validation, i.e correct format?
+  //TODO: add validation for empty field
   if (!zipCode) {
     const err = new Error('Missing `zipCode` in request body');
     err.status = 400;
     return next(err);
   }
 
+  //TODO: add validation for empty field
   if (!description) {
     const err = new Error('Missing `description` in request body');
     err.status = 400;
@@ -60,13 +94,14 @@ router.post('/', (req, res, next) => {
   }
 
   Location.create(newLocation)
-    .then(result => {
+    .then(location => {
       res
-        .location(`${req.originalUrl}/${result.id}`)
+        .location(`${req.originalUrl}/${location.id}`)
         .status(201)
-        .json(result);
+        .json(location);
     })
     .catch(err => {
+      console.log(err)
       next(err);
     });
 });
