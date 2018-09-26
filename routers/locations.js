@@ -131,12 +131,6 @@ router.put('/:id', passport.authenticate('jwt', { session: false, failWithError:
     specialInstructions
   };
 
-  if (!mongoose.Types.ObjectId.isValid(id)) {
-    const err = new Error('The `id` is not valid');
-    err.status = 400;
-    return next(err);
-  }
-
   if (title === '') {
     const err = new Error('Missing `title` in request body');
     err.status = 400;
