@@ -1,10 +1,59 @@
 'use strict';
 
 const express = require('express');
+const mongoose = require('mongoose');
 const User = require('../models/users');
 
 const router = express.Router();
 
+//validate userId
+function validateUserId(id) {
+  if(!mongoose.Types.ObjectId.isValid(id)){
+    const err = new Error('The `userId` is not valid');
+    err.status = 400;
+    return Promise.reject(err);
+  }
+  return User.countDocuments({ _id: id })
+    .then(count => {
+      if (count === 0) {
+        const err = new Error('`userId` doesn\'t exist');
+        err.status = 404;
+        return Promise.reject(err);
+      }
+    });
+}
+
+//GET all users -- for testing purposes only
+router.get('/', (req, res, next) => {
+  User.find()
+    .then(users => {
+      if(users){
+        res.json(users);
+      }
+    })
+    .catch(err => next(err));
+});
+
+//GET user by id
+router.get('/:id', (req, res, next) => {
+  const id = req.params.id;
+
+  return validateUserId(id)
+    .then(() => {
+      User.find({ _id: id })
+        .then(user => {
+          if(user){
+            res.json(user);
+          } else {
+            next();
+          }
+        });
+    })
+    .catch(err => next(err));
+});
+
+
+//CREATE user
 router.post('/', (req, res) => {
   const requiredFields = ['username', 'password', 'firstName', 'lastName'];
   const missingField = requiredFields.find(field => !(field in req.body));
@@ -101,7 +150,7 @@ router.post('/', (req, res) => {
       return User.hashPassword(password);
     })
     .then(hash => {
-      console.log(hash)
+      console.log(hash);
       return User.create({
         username,
         password: hash,
@@ -113,7 +162,6 @@ router.post('/', (req, res) => {
       return res.status(201).json(user.serialize());
     })
     .catch(err => {
-      console.log(err)
       if (err.reason === 'ValidationError') {
         return res.status(err.code).json(err);
       }

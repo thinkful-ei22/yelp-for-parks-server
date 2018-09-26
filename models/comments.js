@@ -8,13 +8,7 @@ const commentSchema = mongoose.Schema({
   subject: { type: String, default: '' },
   text: { type: String, default: '' },
   rating: { type: Number, default: 3 },
-  owner: {
-    id: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User'
-    },
-    username: { type: String }
-  }
+  owner: {type: mongoose.Schema.Types.ObjectId, ref: 'User'}
 });
 
 module.exports = mongoose.model('Comment', commentSchema);
