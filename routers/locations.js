@@ -101,7 +101,7 @@ router.post('/', passport.authenticate('jwt', { session: false, failWithError: t
         .json(location);
     })
     .catch(err => {
-      console.log(err)
+      console.log(err);
       next(err);
     });
 });
@@ -177,7 +177,7 @@ router.put('/:id', passport.authenticate('jwt', { session: false, failWithError:
     })
     .catch(err => {
       next(err);
-    })
+    });
 });
 
 router.delete('/:id', passport.authenticate('jwt', { session: false, failWithError: true }), (req, res, next) => {
@@ -190,6 +190,6 @@ router.delete('/:id', passport.authenticate('jwt', { session: false, failWithErr
     .catch(err => {
       next(err);
     });
-})
+});
 
 module.exports = router;

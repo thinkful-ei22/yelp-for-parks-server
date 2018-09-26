@@ -5,18 +5,14 @@ const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 
 const commentSchema = mongoose.Schema({
-  subject: { type: String, default: '' },
+  subject: { type: String, required: true},
   text: { type: String, default: '' },
   rating: { type: Number, default: 3 },
-  owner: {
-    id: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User'
-    },
-    username: { type: String }
-  }
+  ownerId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
 });
 
-module.exports = mongoose.model('Comment', commentSchema);
+// commentSchema.index({ _id: 1, ownerId: 1 }, { unique: true });
+
+const Comment = mongoose.model('Comment', commentSchema);
 
 module.exports = Comment;

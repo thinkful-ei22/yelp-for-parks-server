@@ -8,7 +8,8 @@ const passport = require('passport');
 
 const usersRouter = require('./routers/users');
 const authRouter = require('./routers/auth');
-const locationRouter = require('./routers/locations');
+const locationsRouter = require('./routers/locations');
+const commentsRouter = require('./routers/comments');
 const { localStrategy, jwtStrategy } = require('./auth/strategies');
 
 const { PORT, CLIENT_ORIGIN } = require('./config');
@@ -36,7 +37,8 @@ passport.use(jwtStrategy);
 
 app.use('/api/users/', usersRouter);
 app.use('/api/auth/', authRouter);
-app.use('/api/locations/', locationRouter);
+app.use('/api/locations/', locationsRouter);
+app.use('/api/comments/', commentsRouter);
 
 const jwtAuth = passport.authenticate('jwt', {session: false});
 
