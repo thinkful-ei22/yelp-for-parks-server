@@ -13,8 +13,13 @@ const LocationSchema = mongoose.Schema({
   description: {type: String, required: true},
   amenities: {type: Array, default: []},
   specialInstructions: {type: String, default: ''},
-  owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-  comments: [ { type: mongoose.Schema.Types.ObjectId, ref: 'Comment' } ]
+  ownerId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  comments: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Comment'
+    }
+  ]
 });
 
 const Location = mongoose.model('Location', LocationSchema);
