@@ -11,8 +11,6 @@ const commentSchema = mongoose.Schema({
   ownerId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
 });
 
-// commentSchema.index({ _id: 1, ownerId: 1 }, { unique: true });
-
 const Comment = mongoose.model('Comment', commentSchema);
 
 module.exports = Comment;
