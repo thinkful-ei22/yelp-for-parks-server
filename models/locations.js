@@ -6,7 +6,7 @@ mongoose.Promise = global.Promise;
 
 const LocationSchema = mongoose.Schema({
   title: {type: String, required: true, unique: true},
-  address: {type: String, required: true, unique: true},
+  address: {type: String, required: true},
   city: {type: String, required: true},
   state: {type: String, required: true},
   zipCode: {type: Number, required: true},

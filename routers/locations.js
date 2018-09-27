@@ -183,7 +183,7 @@ router.put('/:id', passport.authenticate('jwt', { session: false, failWithError:
 router.delete('/:id', passport.authenticate('jwt', { session: false, failWithError: true }), (req, res, next) => {
   const { id } = req.params;
 
-  Location.findOneAndRemove({ _id: id })
+  Location.findOneAndDelete({ _id: id })
     .then(() => {
       res.sendStatus(204);
     })
