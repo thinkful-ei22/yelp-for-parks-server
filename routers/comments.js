@@ -4,6 +4,7 @@ const express = require('express');
 const passport = require('passport');
 const mongoose = require('mongoose');
 const Comment = require('../models/comments');
+const Location = require('../models/locations');
 
 const router = express.Router();
 
@@ -96,8 +97,14 @@ router.post('/', passport.authenticate('jwt', {session: false, failWithError: tr
     return next(err);
   }
 
+  let comment;
+
   Comment.create(newComment)
-    .then(comment => {
+    .then(_comment => {
+      comment = _comment;
+      return Location.findByIdAndUpdate(locationId, { $push: { comments: comment.id } });
+    })
+    .then(() => {
       if (comment){
         res.location(`${req.originalUrl}/${comment.id}`)
           .status(201)
