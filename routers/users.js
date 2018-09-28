@@ -13,7 +13,7 @@ function validateUserId(id) {
     err.status = 400;
     return Promise.reject(err);
   }
-  return User.countDocuments({ _id: id })
+  return User.countDocuments({ id })
     .then(count => {
       if (count === 0) {
         const err = new Error('`userId` doesn\'t exist');
@@ -40,7 +40,7 @@ router.get('/:id', (req, res, next) => {
 
   return validateUserId(id)
     .then(() => {
-      User.find({ _id: id })
+      User.find({ id })
         .then(user => {
           if(user){
             res.json(user);
@@ -150,7 +150,6 @@ router.post('/', (req, res) => {
       return User.hashPassword(password);
     })
     .then(hash => {
-      console.log(hash);
       return User.create({
         username,
         password: hash,
@@ -159,7 +158,7 @@ router.post('/', (req, res) => {
       });
     })
     .then(user => {
-      return res.status(201).json(user.serialize());
+      return res.status(201).json(user);
     })
     .catch(err => {
       if (err.reason === 'ValidationError') {

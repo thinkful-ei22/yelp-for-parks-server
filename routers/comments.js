@@ -4,6 +4,7 @@ const express = require('express');
 const passport = require('passport');
 const mongoose = require('mongoose');
 const Comment = require('../models/comments');
+const Location = require('../models/locations');
 
 const router = express.Router();
 
@@ -14,7 +15,7 @@ function validateCommentId(id) {
     err.status = 400;
     return Promise.reject(err);
   }
-  return Comment.countDocuments({ _id: id })
+  return Comment.countDocuments({ id })
     .then(count => {
       if (count === 0) {
         const err = new Error('`commentId` doesn\'t exist');
@@ -26,7 +27,17 @@ function validateCommentId(id) {
 
 //GET comments
 router.get('/', (req, res, next) => {
-  Comment.find()
+  const { locationId, ownerId } = req.query;
+  
+  let filter = {};
+
+  if(locationId) {
+    filter.locationId = locationId;
+  }
+
+  Comment.find(filter)
+    .populate('ownerId')
+    .sort({ createdAt: 'desc' })
     .then(comments => {
       if(comments) {
         res.json(comments);
@@ -56,16 +67,16 @@ router.get('/:id', (req, res, next) => {
 });
 
 //POST/Create comment
-router.post('/', passport.authenticate('jwt', 
-  {session : false, failWithError: true}), (req, res, next) => {
-  const { subject, text, rating } = req.body;
+router.post('/', passport.authenticate('jwt', {session: false, failWithError: true}), (req, res, next) => {
+  const { subject, text, rating, locationId} = req.body;
   const ownerId = req.user.id;
 
   const newComment = {
     subject,
     text,
     rating, 
-    ownerId
+    ownerId,
+    locationId
   };
 
   if (!subject) {
@@ -79,8 +90,21 @@ router.post('/', passport.authenticate('jwt',
     return next(err);
   }
 
+  // validate locationId
+  if (!mongoose.Types.ObjectId.isValid(locationId)) {
+    const err = new Error('The `locationId` is not valid');
+    err.status = 400;
+    return next(err);
+  }
+
+  let comment;
+
   Comment.create(newComment)
-    .then(comment => {
+    .then(_comment => {
+      comment = _comment;
+      return Location.findByIdAndUpdate(locationId, { $push: { comments: comment.id } });
+    })
+    .then(() => {
       if (comment){
         res.location(`${req.originalUrl}/${comment.id}`)
           .status(201)
@@ -95,7 +119,7 @@ router.post('/', passport.authenticate('jwt',
 //PUT/Edit comment
 router.put('/:id', passport.authenticate('jwt', 
   { session: false, failWithError: true }), (req, res, next) => {
-  const { subject, text, rating } = req.body;
+  const { subject, text, rating, locationId} = req.body;
   const ownerId = req.user.id;
   const id = req.params.id;
 
@@ -103,7 +127,8 @@ router.put('/:id', passport.authenticate('jwt',
     subject, 
     text, 
     rating, 
-    ownerId 
+    ownerId,
+    locationId
   };
 
   if (!subject) {
