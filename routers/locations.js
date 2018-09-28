@@ -2,6 +2,7 @@
 
 const express = require('express');
 const passport = require('passport');
+const mongoose = require('mongoose');
 const Location = require('../models/locations');
 
 const router = express.Router();
@@ -9,6 +10,7 @@ const router = express.Router();
 //Get locations
 router.get('/', (req, res, next) => {
   Location.find()
+    .populate('comments')
     .then(locations => {
       res.json(locations);
     })
@@ -22,6 +24,7 @@ router.get('/:id', (req, res, next) => {
   const id = req.params.id;
 
   Location.findById(id)
+    .populate('comments')
     .then(location => {
       if(location){
         res.json(location);
@@ -44,18 +47,11 @@ router.post('/', passport.authenticate('jwt', { session: false, failWithError: t
     zipCode,
     description,
     amenities,
-    specialInstructions
+    specialInstructions,
+    comments = []
   } = req.body;
 
-  //Remember that amenities and special instructions are not required to post
-  const newLocation = {
-    title,
-    address,
-    city,
-    state,
-    zipCode,
-    description
-  };
+  const ownerId = req.user.id;
 
   //TODO: add validation for empty field
   if (!title) {
@@ -93,6 +89,28 @@ router.post('/', passport.authenticate('jwt', { session: false, failWithError: t
     return next(err);
   }
 
+  if (comments) {
+    comments.forEach(comment => {
+      if (!mongoose.Types.ObjectId.isValid(comment)) {
+        const err = new Error('The comments `id` is not valid');
+        err.status = 400;
+        return next(err);
+      }
+    });
+  }
+
+  //Remember that amenities and special instructions are not required to post
+  const newLocation = {
+    title,
+    address,
+    city,
+    state,
+    zipCode,
+    description,
+    ownerId,
+    comments
+  };
+
   Location.create(newLocation)
     .then(location => {
       res
@@ -108,6 +126,7 @@ router.post('/', passport.authenticate('jwt', { session: false, failWithError: t
 
 router.put('/:id', passport.authenticate('jwt', { session: false, failWithError: true }), (req, res, next) => {
   const { id } = req.params;
+  const ownerId = req.user.id;
 
   const {
     title,
@@ -117,19 +136,9 @@ router.put('/:id', passport.authenticate('jwt', { session: false, failWithError:
     zipCode,
     description,
     amenities,
-    specialInstructions
+    specialInstructions,
+    comments = []
   } = req.body;
-
-  const updatedLocation = {
-    title,
-    address,
-    city,
-    state,
-    zipCode,
-    description,
-    amenities,
-    specialInstructions
-  };
 
   if (title === '') {
     const err = new Error('Missing `title` in request body');
@@ -167,7 +176,30 @@ router.put('/:id', passport.authenticate('jwt', { session: false, failWithError:
     return next(err);
   }
 
-  Location.findOneAndUpdate({ _id: id }, updatedLocation, { new: true })
+  if (comments) {
+    comments.forEach(comment => {
+      if (!mongoose.Types.ObjectId.isValid(comment)) {
+        const err = new Error('The comments `id` is not valid');
+        err.status = 400;
+        return next(err);
+      }
+    });
+  }
+
+  const updatedLocation = {
+    title,
+    address,
+    city,
+    state,
+    zipCode,
+    description,
+    amenities,
+    specialInstructions,
+    ownerId,
+    comments
+  };
+
+  Location.findOneAndUpdate({ id }, updatedLocation, { new: true })
     .then(updatedLocation => {
       if(updatedLocation) {
         res.json(updatedLocation);
@@ -183,7 +215,7 @@ router.put('/:id', passport.authenticate('jwt', { session: false, failWithError:
 router.delete('/:id', passport.authenticate('jwt', { session: false, failWithError: true }), (req, res, next) => {
   const { id } = req.params;
 
-  Location.findOneAndDelete({ _id: id })
+  Location.findOneAndDelete({ id })
     .then(() => {
       res.sendStatus(204);
     })

@@ -8,7 +8,18 @@ const commentSchema = mongoose.Schema({
   subject: { type: String, required: true},
   text: { type: String, default: '' },
   rating: { type: Number, default: 3 },
-  ownerId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
+  ownerId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  locationId: { type: mongoose.Schema.Types.ObjectId, ref: 'Location', required: true }
+});
+
+commentSchema.set('timestamps', true);
+
+commentSchema.set('toObject', {
+  virtuals: true,
+  versionKey: false,
+  transform: (doc, ret) => {
+    delete ret._id;
+  }
 });
 
 const Comment = mongoose.model('Comment', commentSchema);

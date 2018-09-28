@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 
 mongoose.Promise = global.Promise;
 
-const LocationSchema = mongoose.Schema({
+const locationSchema = mongoose.Schema({
   title: {type: String, required: true, unique: true},
   address: {type: String, required: true},
   city: {type: String, required: true},
@@ -13,15 +13,20 @@ const LocationSchema = mongoose.Schema({
   description: {type: String, required: true},
   amenities: {type: Array, default: []},
   specialInstructions: {type: String, default: ''},
-  ownerId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-  comments: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Comment'
-    }
-  ]
+  ownerId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  comments: [ { type: mongoose.Schema.Types.ObjectId, ref: 'Comment' } ]
 });
 
-const Location = mongoose.model('Location', LocationSchema);
+locationSchema.set('timestamps', true);
+
+locationSchema.set('toObject', {
+  virtuals: true,
+  versionKey: false,
+  transform: (doc, ret) => {
+    delete ret._id;
+  }
+});
+
+const Location = mongoose.model('Location', locationSchema);
 
 module.exports = Location;
