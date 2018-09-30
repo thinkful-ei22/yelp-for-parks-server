@@ -13,7 +13,7 @@ function validateUserId(id) {
     err.status = 400;
     return Promise.reject(err);
   }
-  return User.countDocuments({ id })
+  return User.countDocuments({ _id: id })
     .then(count => {
       if (count === 0) {
         const err = new Error('`userId` doesn\'t exist');
@@ -40,7 +40,7 @@ router.get('/:id', (req, res, next) => {
 
   return validateUserId(id)
     .then(() => {
-      User.find({ id })
+      User.findById(id)
         .then(user => {
           if(user){
             res.json(user);
