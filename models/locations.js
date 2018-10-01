@@ -11,6 +11,7 @@ const locationSchema = mongoose.Schema({
   state: {type: String, required: true},
   zipCode: {type: Number, required: true},
   description: {type: String, required: true},
+  image: { type: String, default: 'https://static.umotive.com/img/product_image_thumbnail_placeholder.png' },
   amenities: {type: Array, default: []},
   specialInstructions: {type: String, default: ''},
   ownerId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
