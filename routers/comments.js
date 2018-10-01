@@ -15,7 +15,7 @@ function validateCommentId(id) {
     err.status = 400;
     return Promise.reject(err);
   }
-  return Comment.countDocuments({ id })
+  return Comment.countDocuments({ _id: id })
     .then(count => {
       if (count === 0) {
         const err = new Error('`commentId` doesn\'t exist');
@@ -119,7 +119,7 @@ router.post('/', passport.authenticate('jwt', {session: false, failWithError: tr
 //PUT/Edit comment
 router.put('/:id', passport.authenticate('jwt', 
   { session: false, failWithError: true }), (req, res, next) => {
-  const { subject, text, rating, locationId} = req.body;
+  const { subject, text = '', rating = 3, locationId} = req.body;
   const ownerId = req.user.id;
   const id = req.params.id;
 

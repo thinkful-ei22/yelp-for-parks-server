@@ -135,8 +135,8 @@ router.put('/:id', passport.authenticate('jwt', { session: false, failWithError:
     state,
     zipCode,
     description,
-    amenities,
-    specialInstructions,
+    amenities = [],
+    specialInstructions = '',
     comments = []
   } = req.body;
 
@@ -199,7 +199,7 @@ router.put('/:id', passport.authenticate('jwt', { session: false, failWithError:
     comments
   };
 
-  Location.findOneAndUpdate({ id }, updatedLocation, { new: true })
+  Location.findByIdAndUpdate(id, updatedLocation, { new: true })
     .then(updatedLocation => {
       if(updatedLocation) {
         res.json(updatedLocation);
@@ -215,7 +215,7 @@ router.put('/:id', passport.authenticate('jwt', { session: false, failWithError:
 router.delete('/:id', passport.authenticate('jwt', { session: false, failWithError: true }), (req, res, next) => {
   const { id } = req.params;
 
-  Location.findOneAndDelete({ id })
+  Location.findByIdAndRemove(id)
     .then(() => {
       res.sendStatus(204);
     })
