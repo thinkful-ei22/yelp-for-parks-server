@@ -48,6 +48,7 @@ router.post('/', passport.authenticate('jwt', { session: false, failWithError: t
     description,
     amenities,
     specialInstructions,
+    image,
     comments = []
   } = req.body;
 
@@ -108,7 +109,8 @@ router.post('/', passport.authenticate('jwt', { session: false, failWithError: t
     zipCode,
     description,
     ownerId,
-    comments
+    comments,
+    image
   };
 
   Location.create(newLocation)
@@ -137,7 +139,8 @@ router.put('/:id', passport.authenticate('jwt', { session: false, failWithError:
     description,
     amenities = [],
     specialInstructions = '',
-    comments = []
+    comments = [],
+    image = 'https://static.umotive.com/img/product_image_thumbnail_placeholder.png'
   } = req.body;
 
   if (title === '') {
@@ -196,7 +199,8 @@ router.put('/:id', passport.authenticate('jwt', { session: false, failWithError:
     amenities,
     specialInstructions,
     ownerId,
-    comments
+    comments,
+    image
   };
 
   Location.findByIdAndUpdate(id, updatedLocation, { new: true })
