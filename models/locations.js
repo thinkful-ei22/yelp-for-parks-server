@@ -28,6 +28,15 @@ locationSchema.set('toObject', {
   }
 });
 
+locationSchema.index(
+  {
+    title: 'text', 
+    description: 'text', 
+    specialInstructions: 'text',
+    amenities: 'text'
+  }
+);
+
 const Location = mongoose.model('Location', locationSchema);
 
 module.exports = Location;
