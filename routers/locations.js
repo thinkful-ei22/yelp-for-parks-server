@@ -9,7 +9,34 @@ const router = express.Router();
 
 //Get locations
 router.get('/', (req, res, next) => {
-  Location.find()
+  const { ownerId, zipCode, city, state, searchTerm } = req.query;
+
+  let filter = {};
+
+  //filter locations by ownerId
+  //add "?ownerId=5bb23cf5f1d49a4288f9092c" to URL query
+  if (ownerId) {
+    filter.ownerId = ownerId;
+  }
+
+  if (zipCode) {
+    filter.zipCode = zipCode;
+  }
+
+  if (city) {
+    filter.city = city;
+  }
+
+  if (state) {
+    filter.state = state;
+  }
+
+  //filter by search term
+  if (searchTerm) {
+    filter.$text = { $search : searchTerm };
+  }
+
+  Location.find(filter)
     .populate('comments')
     .then(locations => {
       res.json(locations);
