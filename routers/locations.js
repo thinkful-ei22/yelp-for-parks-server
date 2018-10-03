@@ -3,40 +3,21 @@
 const express = require('express');
 const passport = require('passport');
 const mongoose = require('mongoose');
+const cloudinary = require('cloudinary');
 const Location = require('../models/locations');
 
 const router = express.Router();
 
+//instantiate cloudinary config
+cloudinary.config({
+  cloud_name: process.env.cloud_name,
+  api_key: process.env.api_key,
+  api_secret: process.env.api_secret
+})
+
 //Get locations
 router.get('/', (req, res, next) => {
-  const { ownerId, zipCode, city, state, searchTerm } = req.query;
-
-  let filter = {};
-
-  //filter locations by ownerId
-  //add "?ownerId=5bb23cf5f1d49a4288f9092c" to URL query
-  if (ownerId) {
-    filter.ownerId = ownerId;
-  }
-
-  if (zipCode) {
-    filter.zipCode = zipCode;
-  }
-
-  if (city) {
-    filter.city = city;
-  }
-
-  if (state) {
-    filter.state = state;
-  }
-
-  //filter by search term
-  if (searchTerm) {
-    filter.$text = { $search : searchTerm };
-  }
-
-  Location.find(filter)
+  Location.find()
     .populate('comments')
     .then(locations => {
       res.json(locations);
@@ -53,7 +34,7 @@ router.get('/:id', (req, res, next) => {
   Location.findById(id)
     .populate('comments')
     .then(location => {
-      if(location){
+      if (location) {
         res.json(location);
       } else {
         next();
@@ -136,11 +117,17 @@ router.post('/', passport.authenticate('jwt', { session: false, failWithError: t
     zipCode,
     description,
     ownerId,
-    comments,
-    image
+    comments
   };
 
-  Location.create(newLocation)
+  const values = Object.values(req.files);
+  const imageUploadPromises = values.map(image => cloudinary.uploader.upload(image.path));
+
+  Promise
+    .all(imageUploadPromises)
+    .then(images => {
+      newLocation.image = images[0].secure_url;
+      return Location.create(newLocation)
     .then(location => {
       res
         .location(`${req.originalUrl}/${location.id}`)
@@ -153,6 +140,7 @@ router.post('/', passport.authenticate('jwt', { session: false, failWithError: t
     });
 });
 
+});
 router.put('/:id', passport.authenticate('jwt', { session: false, failWithError: true }), (req, res, next) => {
   const { id } = req.params;
   const ownerId = req.user.id;
@@ -232,7 +220,7 @@ router.put('/:id', passport.authenticate('jwt', { session: false, failWithError:
 
   Location.findByIdAndUpdate(id, updatedLocation, { new: true })
     .then(updatedLocation => {
-      if(updatedLocation) {
+      if (updatedLocation) {
         res.json(updatedLocation);
       } else {
         next();

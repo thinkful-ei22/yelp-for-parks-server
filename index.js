@@ -2,6 +2,7 @@
 
 require('dotenv').config();
 const express = require('express');
+const formData = require('express-form-data');
 const cors = require('cors');
 const morgan = require('morgan');
 const passport = require('passport');
@@ -32,6 +33,8 @@ app.use(
   })
 );
 
+app.use(formData.parse());
+
 passport.use(localStrategy);
 passport.use(jwtStrategy);
 
@@ -40,7 +43,7 @@ app.use('/api/auth/', authRouter);
 app.use('/api/locations/', locationsRouter);
 app.use('/api/comments/', commentsRouter);
 
-const jwtAuth = passport.authenticate('jwt', {session: false});
+const jwtAuth = passport.authenticate('jwt', { session: false });
 
 //example of protected endpoint
 app.get('/api/protected', jwtAuth, (req, res) => {
