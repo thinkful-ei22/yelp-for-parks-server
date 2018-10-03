@@ -54,5 +54,8 @@ typings/
 # Yarn Integrity file
 .yarn-integrity
 
+# eslint
+.eslintrc.js
+
 # dotenv environment variables file
 .env
