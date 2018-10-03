@@ -35,6 +35,10 @@ router.get('/', (req, res, next) => {
     filter.locationId = locationId;
   }
 
+  if(ownerId) {
+    filter.ownerId = ownerId;
+  }
+
   Comment.find(filter)
     .populate('ownerId')
     .sort({ createdAt: 'desc' })
