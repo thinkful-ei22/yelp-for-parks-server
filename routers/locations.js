@@ -165,9 +165,9 @@ router.post('/', passport.authenticate('jwt', { session: false, failWithError: t
       console.log(err);
       next(err);
     });
+  });
 });
 
-});
 router.put('/:id', passport.authenticate('jwt', { session: false, failWithError: true }), (req, res, next) => {
   const { id } = req.params;
   const ownerId = req.user.id;
@@ -261,7 +261,33 @@ router.put('/:id', passport.authenticate('jwt', { session: false, failWithError:
       next(err);
     });
 });
-  
+
+router.put('/:id/image', passport.authenticate('jwt', { session: false, failWithError: true }), (req, res, next) => {
+  const { id } = req.params;
+
+  const values = Object.values(req.files);
+  if(values.length < 1) {
+    console.log('no file uploaded!')
+    return;
+  }
+  const imageUploadPromises = values.map(image => cloudinary.v2.uploader.upload(image.path, {
+    folder: 'parks'
+  }));
+
+  Promise
+    .all(imageUploadPromises)
+    .then(images => {
+      console.log('Images', images);
+      const image = images[0].secure_url;
+      console.log(image)
+      return Location.findByIdAndUpdate(id, { $set: { image } }, { new: true })
+        .then(results => res.json(results));
+        })
+        .catch(err => {
+          console.log(err);
+          next(err);
+        });
+})
 
 router.delete('/:id', passport.authenticate('jwt', { session: false, failWithError: true }), (req, res, next) => {
   const { id } = req.params;
