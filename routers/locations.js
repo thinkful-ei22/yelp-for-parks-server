@@ -110,6 +110,12 @@ router.post('/', passport.authenticate('jwt', { session: false, failWithError: t
     return next(err);
   }
 
+  if (!(/(^\d{5}$)|(^\d{5}-\d{4}$)/.test(zipCode))){
+    const err = new Error('Wrong `zipCode` format');
+    err.status = 400;
+    return next(err);
+  }
+
   //TODO: add validation for empty field
   if (!description) {
     const err = new Error('Missing `description` in request body');
