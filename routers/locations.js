@@ -277,9 +277,7 @@ router.put('/:id/image', passport.authenticate('jwt', { session: false, failWith
   Promise
     .all(imageUploadPromises)
     .then(images => {
-      console.log('Images', images);
       const image = images[0].secure_url;
-      console.log(image)
       return Location.findByIdAndUpdate(id, { $set: { image } }, { new: true })
         .then(results => res.json(results));
         })
