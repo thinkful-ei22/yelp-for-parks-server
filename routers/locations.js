@@ -241,11 +241,15 @@ router.put('/:id', passport.authenticate('jwt', { session: false, failWithError:
     amenities,
     specialInstructions,
     ownerId,
-    comments,
-    image
+    comments
   };
 
-  Location.findByIdAndUpdate(id, updatedLocation, { new: true })
+  Location.findById(id)
+    .then(location => {
+      const image = location.image;
+      updatedLocation.image = image;
+      return Location.findByIdAndUpdate(id, updatedLocation, { new: true })
+    })
     .then(updatedLocation => {
       if (updatedLocation) {
         res.json(updatedLocation);
