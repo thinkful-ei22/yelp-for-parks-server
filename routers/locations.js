@@ -257,11 +257,22 @@ router.put('/:id', passport.authenticate('jwt', { session: false, failWithError:
       next(err);
     });
 });
+  
 
 router.delete('/:id', passport.authenticate('jwt', { session: false, failWithError: true }), (req, res, next) => {
   const { id } = req.params;
 
-  Location.findByIdAndRemove(id)
+  Location.findById(id)
+    .then(location => {
+      //extract image public_id
+      let regex = /([\w\d_-]*)\.?[^\\\/]*$/i;
+      //concatenate with folder name
+      const imageId = `parks/${location['image'].match(regex)[1]}`
+      //delete image from cloudinary
+      cloudinary.uploader.destroy(imageId, { invalidate: true }, (error, result) => console.log(result, error));
+      //delete location
+      return Location.findByIdAndRemove(id)
+    })
     .then(() => {
       res.sendStatus(204);
     })
