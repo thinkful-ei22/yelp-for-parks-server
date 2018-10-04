@@ -140,7 +140,9 @@ router.post('/', passport.authenticate('jwt', { session: false, failWithError: t
   };
 
   const values = Object.values(req.files);
-  const imageUploadPromises = values.map(image => cloudinary.uploader.upload(image.path));
+  const imageUploadPromises = values.map(image => cloudinary.v2.uploader.upload(image.path, {
+    folder: 'parks'
+  }));
 
   Promise
     .all(imageUploadPromises)
