@@ -8,6 +8,7 @@ module.exports = {
       cloud_name: process.env.cloud_name,
       api_key: process.env.api_key,
       api_secret: process.env.api_secret,
+      key: process.env.key,
       DATABASE_URL:
             process.env.DATABASE_URL || 'mongodb://admin:admin123@ds115263.mlab.com:15263/parks',
       TEST_DATABASE_URL:
