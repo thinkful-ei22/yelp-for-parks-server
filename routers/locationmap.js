@@ -5,6 +5,7 @@ const passport = require('passport');
 const mongoose = require('mongoose');
 const LocationMap = require('../models/locationmap');
 const config = require('../config.js');
+const axios = require('axios');
 
 const router = express.Router();
 
@@ -34,7 +35,7 @@ router.post('/', passport.authenticate('jwt', {session: false, failWithError: tr
       lng: longitude
     }
     console.log("Right before coordinates return statement in axios", coordinates);
-    return coordinates;
+    return res.json(coordinates);
   })
 });
 
