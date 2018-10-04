@@ -33,7 +33,18 @@ app.use(
   })
 );
 
-app.use(formData.parse());
+const options = {
+  autoFiles: true
+};
+
+// parse a data with connect-multiparty. 
+app.use(formData.parse(options));
+// clear all empty files (size == 0)
+app.use(formData.format());
+// change file objects to node stream.Readable 
+app.use(formData.stream());
+// union body and files
+app.use(formData.union())
 
 passport.use(localStrategy);
 passport.use(jwtStrategy);
