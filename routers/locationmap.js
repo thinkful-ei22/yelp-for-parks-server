@@ -3,7 +3,6 @@
 const express = require('express');
 const passport = require('passport');
 const mongoose = require('mongoose');
-const LocationMap = require('../models/locationmap');
 const config = require('../config.js');
 const axios = require('axios');
 
