@@ -130,7 +130,7 @@ router.post('/', (req, res) => {
     });
   }
 
-  let { username, password, firstName, lastName } = req.body;
+  let { username, password, firstName, lastName, city } = req.body;
 
   firstName = firstName.trim();
   lastName = lastName.trim();
@@ -155,7 +155,8 @@ router.post('/', (req, res) => {
         username,
         password: hash,
         firstName,
-        lastName
+        lastName,
+        city
       });
     })
     .then(user => {
@@ -249,7 +250,7 @@ router.put('/:id', passport.authenticate('jwt', { session: false, failWithError:
     });
   }
 
-  let { username, password, firstName, lastName } = req.body;
+  let { username, password, firstName, lastName, city } = req.body;
 
   firstName = firstName.trim();
   lastName = lastName.trim();
@@ -274,7 +275,8 @@ router.put('/:id', passport.authenticate('jwt', { session: false, failWithError:
         username,
         password: hash,
         firstName,
-        lastName
+        lastName,
+        city
       }, { new: true });
     })
     .then(updatedUser => {
