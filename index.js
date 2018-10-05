@@ -11,6 +11,7 @@ const usersRouter = require('./routers/users');
 const authRouter = require('./routers/auth');
 const locationsRouter = require('./routers/locations');
 const commentsRouter = require('./routers/comments');
+const locationMapRouter = require('./routers/locationmap');
 const { localStrategy, jwtStrategy } = require('./auth/strategies');
 
 const { PORT, CLIENT_ORIGIN } = require('./config');
@@ -37,11 +38,11 @@ const options = {
   autoFiles: true
 };
 
-// parse a data with connect-multiparty. 
+// parse a data with connect-multiparty.
 app.use(formData.parse(options));
 // clear all empty files (size == 0)
 app.use(formData.format());
-// change file objects to node stream.Readable 
+// change file objects to node stream.Readable
 app.use(formData.stream());
 // union body and files
 app.use(formData.union())
@@ -53,6 +54,7 @@ app.use('/api/users/', usersRouter);
 app.use('/api/auth/', authRouter);
 app.use('/api/locations/', locationsRouter);
 app.use('/api/comments/', commentsRouter);
+app.use('/api/locationmap/', locationMapRouter);
 
 const jwtAuth = passport.authenticate('jwt', { session: false });
 
