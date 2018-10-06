@@ -57,5 +57,9 @@ typings/
 # eslint
 .eslintrc.js
 
-# dotenv environment variables file
+# necessary!!!
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 .env
