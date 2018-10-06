@@ -56,3 +56,6 @@ typings/
 
 # eslint
 .eslintrc.js
+
+# .env
+.env
