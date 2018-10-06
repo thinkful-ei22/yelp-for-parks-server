@@ -56,3 +56,9 @@ typings/
 
 # eslint
 .eslintrc.js
+
+# necessary!!!
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
