@@ -57,5 +57,5 @@ typings/
 # eslint
 .eslintrc.js
 
-# .env
+# dotenv environment variables file
 .env
