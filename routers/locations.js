@@ -278,11 +278,23 @@ router.put('/:id/image', passport.authenticate('jwt', { session: false, failWith
     folder: 'parks'
   }));
 
+  let image;
+
   Promise
     .all(imageUploadPromises)
     .then(images => {
-      const image = images[0].secure_url;
-      return Location.findByIdAndUpdate(id, { $set: { image } }, { new: true })
+      image = images[0].secure_url;
+      return Location.findById(id)
+        .then(location => {
+          //extract image public_id
+          let regex = /([\w\d_-]*)\.?[^\\\/]*$/i;
+          //concatenate with folder name
+          const imageId = `parks/${location['image'].match(regex)[1]}`
+          //delete image from cloudinary
+          cloudinary.uploader.destroy(imageId, { invalidate: true }, (error, result) => console.log(result, error));
+          //delete location
+          return Location.findByIdAndUpdate(id, { $set: { image } }, { new: true })
+        })
         .then(results => res.json(results));
         })
         .catch(err => {
