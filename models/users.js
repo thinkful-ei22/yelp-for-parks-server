@@ -22,6 +22,10 @@ userSchema.set('toJSON', {
   }
 });
 
+userSchema.virtual('firstLastInitial').get(function () {
+  return `${this.firstName} ${this.lastName[0]}.`;
+});
+
 userSchema.set('timestamps', true);
 
 userSchema.methods.validatePassword = function(password){

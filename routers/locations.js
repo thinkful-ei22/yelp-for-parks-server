@@ -40,6 +40,7 @@ router.get('/', (req, res, next) => {
   }
   Location.find(filter)
     .populate('comments')
+    .populate('ownerId')
     .limit(3).skip(page * 3)
     .then(locations => {
       res.json(locations);
@@ -55,6 +56,7 @@ router.get('/:id', (req, res, next) => {
 
   Location.findById(id)
     .populate('comments')
+    .populate('ownerId')
     .then(location => {
       if (location) {
         res.json(location);
