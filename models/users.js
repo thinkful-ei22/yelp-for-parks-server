@@ -13,7 +13,7 @@ const userSchema = mongoose.Schema({
   city: { type: String, default: ''}
 });
 
-userSchema.set('toObject', {
+userSchema.set('toJSON', {
   virtuals: true,
   versionKey: false,
   transform: (doc, ret) => {

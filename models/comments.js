@@ -14,7 +14,7 @@ const commentSchema = mongoose.Schema({
 
 commentSchema.set('timestamps', true);
 
-commentSchema.set('toObject', {
+commentSchema.set('toJSON', {
   virtuals: true,
   versionKey: false,
   transform: (doc, ret) => {
