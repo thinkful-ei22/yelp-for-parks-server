@@ -13,13 +13,17 @@ const userSchema = mongoose.Schema({
   city: { type: String, default: ''}
 });
 
-userSchema.set('toObject', {
+userSchema.set('toJSON', {
   virtuals: true,
   versionKey: false,
   transform: (doc, ret) => {
     delete ret._id;
     delete ret.password;
   }
+});
+
+userSchema.virtual('firstLastInitial').get(function () {
+  return `${this.firstName} ${this.lastName[0]}.`;
 });
 
 userSchema.set('timestamps', true);

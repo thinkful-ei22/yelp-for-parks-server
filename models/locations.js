@@ -20,7 +20,7 @@ const locationSchema = mongoose.Schema({
 
 locationSchema.set('timestamps', true);
 
-locationSchema.set('toObject', {
+locationSchema.set('toJSON', {
   virtuals: true,
   versionKey: false,
   transform: (doc, ret) => {
