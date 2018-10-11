@@ -146,7 +146,9 @@ router.post('/', passport.authenticate('jwt', { session: false, failWithError: t
 		zipCode,
 		description,
 		ownerId,
-		comments
+		comments,
+		specialInstructions,
+		amenities
 	};
 
 	const values = Object.values(req.files);
@@ -157,7 +159,11 @@ router.post('/', passport.authenticate('jwt', { session: false, failWithError: t
 	Promise
 		.all(imageUploadPromises)
 		.then(images => {
-			newLocation.image = images[0].secure_url;
+			if(images.length === 0){
+				newLocation.image = 'https://static.umotive.com/img/product_image_thumbnail_placeholder.png';
+			} else {
+				newLocation.image = images[0].secure_url;
+			}
 			return Location.create(newLocation)
 				.then(location => {
 					res
@@ -291,7 +297,7 @@ router.put('/:id/image', passport.authenticate('jwt', { session: false, failWith
 			image = images[0].secure_url;
 			return Location.findById(id)
 				.then(location => {
-					if (location.ownerId !== ownerId) {
+					if (location.ownerId.toString() !== ownerId) {
 						const err = new Error('Unauthorized operation. Users are only allowed to update images for locations they created.');
 						err.status = 422;
 						return next(err);
