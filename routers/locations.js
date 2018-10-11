@@ -249,7 +249,7 @@ router.put('/:id', passport.authenticate('jwt', { session: false, failWithError:
 
 	Location.findById(id)
 		.then(location => {
-			if (location.ownerId !== ownerId){
+			if (location.ownerId.toString() !== ownerId){
 				const err = new Error('Unauthorized operation. Users are only allowed to edit locations they created.');
 				err.status = 422;
 				return next(err);
