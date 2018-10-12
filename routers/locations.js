@@ -55,7 +55,7 @@ router.get('/:id', (req, res, next) => {
 	const id = req.params.id;
 
 	Location.findById(id)
-		.populate('comments')
+		.populate({ path: 'comments', populate: { path: 'ownerId'} })
 		.populate('ownerId')
 		.then(location => {
 			if (location) {
