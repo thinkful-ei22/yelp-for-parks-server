@@ -19,7 +19,7 @@ cloudinary.config({
 router.get('/', (req, res, next) => {
 	const { ownerId, zipCode, city, state, searchTerm } = req.query;
 	let filter = {};
-	let page = req.query.page || 0;
+	// let page = req.query.page || 0;
 	//filter locations by ownerId
 	//add "?ownerId=5bb23cf5f1d49a4288f9092c" to URL query
 	if (ownerId) {

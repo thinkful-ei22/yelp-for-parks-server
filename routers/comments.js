@@ -59,6 +59,7 @@ router.get('/:id', (req, res, next) => {
 	return validateCommentId(id)
 		.then(() => {
 			Comment.findById(id)
+				.populate('ownerId')
 				.then(comment => {
 					if(comment){
 						res.json(comment);
