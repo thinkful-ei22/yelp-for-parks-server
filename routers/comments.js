@@ -105,6 +105,7 @@ router.post('/', passport.authenticate('jwt', {session: false, failWithError: tr
 	let comment;
 
 	Comment.create(newComment)
+		.populate('ownerId')
 		.then(_comment => {
 			comment = _comment;
 			return Location.findByIdAndUpdate(locationId, { $push: { comments: comment.id } });
